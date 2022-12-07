@@ -6,7 +6,6 @@ const contactsPath = path.resolve('./db/contacts.json');
 function listContacts() {
   fs.readFile(contactsPath, 'utf-8')
     .then(data => {
-      console.table(data);
       if (!data) {
         console.warn('there no contacts!!');
         return;
@@ -20,7 +19,7 @@ function listContacts() {
 function getContactById(contactId) {
   fs.readFile(contactsPath, 'utf-8')
     .then(data => JSON.parse(data))
-    .then(result => result.find(contact => Number(contact.id) === contactId))
+    .then(result => result.find(contact => Number(contact.id) === Number(contactId)))
     .then(result => {
       console.table(result);
     })
@@ -32,7 +31,7 @@ function removeContact(contactId) {
     .then(data => JSON.parse(data))
     .then(result =>
       result.filter(contact => {
-        if (contact.id !== toString(contactId)) {
+        if (Number(contact.id) !== Number(contactId)) {
           return contact;
         }
       }),
@@ -65,7 +64,7 @@ function addContact(name, email, phone) {
 
 function getMaxId(contactsList) {
   return contactsList.reduce(
-    (maxId, contact) => (Number(contact.id) > maxId ? (newId = Number(contact.id)) : maxId),
+    (maxId, contact) => (Number(contact.id) > maxId ? (maxId = Number(contact.id)) : maxId),
     0,
   );
 }
