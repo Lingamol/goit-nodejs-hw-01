@@ -1,72 +1,38 @@
 const fs = require('fs').promises;
 const path = require('path');
+const shortid = require('shortid');
 
-const contactsPath = path.resolve('./db/contacts.json');
+// const contactsPath = path.resolve('./db/contacts.json');
+const contactsPath = path.join(__dirname, '/db/contacts.json');
 
-function listContacts() {
-  fs.readFile(contactsPath, 'utf-8')
-    .then(data => {
-      if (!data) {
-        console.warn('there no contacts!!');
-        return;
-      }
-      return JSON.parse(data);
-    })
-    .then(result => console.table(result))
-    .catch(error => console.error(error));
+async function listContacts() {
+  const listContacts = await fs.readFile(contactsPath, 'utf-8');
+  return JSON.parse(listContacts);
 }
 
-function getContactById(contactId) {
-  fs.readFile(contactsPath, 'utf-8')
-    .then(data => JSON.parse(data))
-    .then(result => result.find(contact => Number(contact.id) === Number(contactId)))
-    .then(result => {
-      console.table(result);
-    })
-    .catch(error => console.error(error));
+async function getContactById(contactId) {
+  const contactsList = await listContacts();
+  const contactById = contactsList.find(contact => contact.id === contactId);
+  return contactById || null;
 }
 
-function removeContact(contactId) {
-  fs.readFile(contactsPath, 'utf-8')
-    .then(data => JSON.parse(data))
-    .then(result =>
-      result.filter(contact => {
-        if (Number(contact.id) !== Number(contactId)) {
-          return contact;
-        }
-      }),
-    )
-    .then(result => {
-      fs.writeFile(contactsPath, JSON.stringify(result), 'utf-8');
-      console.table(result);
-    })
-    .catch(error => console.error(error));
+async function removeContact(contactId) {
+  const contactsList = await listContacts();
+  const index = contactsList.findIndex(contact => contact.id === contactId);
+  if (index === -1) {
+    return null;
+  }
+  const [result] = contactsList.splice(index, 1);
+  await fs.writeFile(contactsPath, JSON.stringify(contactsList, null, 2), 'utf-8');
+  return result;
 }
-function addContact(name, email, phone) {
-  fs.readFile(contactsPath, 'utf-8')
-    .then(data => {
-      if (!data) {
-        console.warn('there no contacts');
-        return;
-      }
-      return JSON.parse(data);
-    })
-    .then(result => {
-      const id = JSON.stringify(getMaxId(result) + 1);
-      return [...result, { id, name, email, phone }];
-    })
-    .then(result => {
-      console.table(result);
-      fs.writeFile(contactsPath, JSON.stringify(result), 'utf-8');
-    })
-    .catch(error => console.error(error));
-}
-
-function getMaxId(contactsList) {
-  return contactsList.reduce(
-    (maxId, contact) => (Number(contact.id) > maxId ? (maxId = Number(contact.id)) : maxId),
-    0,
-  );
+async function addContact(name, email, phone) {
+  const newContact = { id: shortid.generate(), name, email, phone };
+  const contactsList = await listContacts();
+  // const newListContacts = [...contactsList, newContact];
+  contactsList.push(newContact);
+  await fs.writeFile(contactsPath, JSON.stringify(contactsList, null, 2), 'utf-8');
+  return newContact;
 }
 
 module.exports = { listContacts, getContactById, removeContact, addContact };

@@ -1,16 +1,16 @@
 # Получаем и выводим весь список контактов в виде таблицы (console.table)
 
-node index.js --action list https://monosnap.com/file/Hrc2hfy1cINMK8aTbpCxCaJnGKetyp
+node index.js --action list https://monosnap.com/file/zFv50pJp671pwlLC6sOS6SdJGbcdLt
 
 # Получаем контакт по id
 
-node index.js --action get --id 5 https://monosnap.com/file/O5Dbx7hyfZQvPqFGDgjrWbKIcpfJcF
+node index.js --action get --id 5 https://monosnap.com/file/BHUAGjgiWBKFKCMMWh8MnnEMVAxJLl
 
 # Добавялем контакт
 
 node index.js --action add --name Mango --email mango@gmail.com --phone 322-22-22
-https://monosnap.com/file/BxQnsEnMyGxY9QkmCZcUxAK5IaVmzL
+https://monosnap.com/file/gosPIVkcxTuy9aQQphHtPaegFWhk79
 
 # Удаляем контакт
 
-node index.js --action remove --id=3 https://monosnap.com/file/cOteNW4id0XIp1Xw1l5kXBcNO96tt0
+node index.js --action remove --id=3 https://monosnap.com/file/bn8UjUe5Wc3ZyYzhwweGAvy2oQsCio
